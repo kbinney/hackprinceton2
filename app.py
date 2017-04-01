@@ -59,7 +59,7 @@ def webhook():
                     if keyword(message_text):
                         send_message(sender_id, "did it get here?")
                         cur = conn.cursor();
-                        cur.execute("INSERT INTO ratings VALUES (2, 2, 3.5)")
+                        cur.execute("INSERT INTO ratings VALUES (1, 2, 4, 3.5)")
                         conn.commit()
                         cur.close()
                         #db["classes"].insert(student_id = sender_id, class_id = 2, class_rating = 4.5)
