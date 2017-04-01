@@ -60,7 +60,8 @@ def webhook():
 def keyword(message):
     if (message == "home"):
         return True
-    else
+    else:
+        return False
 
 def send_message(recipient_id, message_text):
 
@@ -134,7 +135,7 @@ def send_generic_message(recipientId):
       }
     }
     })
-    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
+    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=messageData)
     if r.status_code != 200:
         log(r.status_code)
         log(r.text)
