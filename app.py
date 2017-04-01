@@ -58,7 +58,8 @@ def webhook():
                     message_text = messaging_event["message"]["text"]  # the message's text
                     if keyword(message_text):
                         #send_message(sender_id, "did it get here?")
-                        cur = conn.cursor();
+                        conn.rollback()
+                        cur = conn.cursor()
                         cur.execute("INSERT INTO ratings VALUES (1, 2, 4, 3.5)")
                         conn.commit()
                         cur.close()
@@ -75,7 +76,6 @@ def webhook():
 
                 if messaging_event.get("postback"):  # user clicked/tapped "postback" button in earlier message
                     pass
-
     return "ok", 200
 
 def is_class(text):
