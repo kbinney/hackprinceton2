@@ -56,7 +56,7 @@ def webhook():
                     sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]  # the message's text
-                    if is_class(message_text):
+                    if keyword(message_text):
                         db.classes.insert(class_id =1, student_id=2, rating =4, hours=10, papers=0, pages=2, reading=2, psets=3, tests=4)
 
                         send_generic_message(sender_id)
