@@ -12,7 +12,7 @@ from flask import Flask, request
 from pydal import DAL, Field
 from fbmq import Attachment, Template, QuickReply, Page
 
-# page = fbmq.Page(EAAFcHZCdCaGwBAIP6pJPLww9ZA2rQDomnqA8mnWo6QdL7umCOzKtRdiUT0u4uYHhRrDwVZAgbt9b5ps5GdVMRnmvLsQJRy9dZBZCFPmFI2DiWWQj48kHFzKJtoZBQJ2mqEiT9O9Swfwo5ueh6oTeeBXGA6iq0Y0rqzx7AMVt5JXgZDZD); 
+# page = fbmq.Page(EAAFcHZCdCaGwBAIP6pJPLww9ZA2rQDomnqA8mnWo6QdL7umCOzKtRdiUT0u4uYHhRrDwVZAgbt9b5ps5GdVMRnmvLsQJRy9dZBZCFPmFI2DiWWQj48kHFzKJtoZBQJ2mqEiT9O9Swfwo5ueh6oTeeBXGA6iq0Y0rqzx7AMVt5JXgZDZD);
 
 
 urlparse.uses_netloc.append("postgres")
@@ -68,7 +68,7 @@ def webhook():
                         #send_message(sender_id, "did it get here?")
                         conn.rollback()
                         cur = conn.cursor()
-                        cur.execute("INSERT INTO ratings (id, student_id, class_id, rating) VALUES (1, 2, 4, 3.5)")
+                        cur.execute("INSERT INTO ratings (student_id, class_id, rating) VALUES (2, 4, 3.5)")
                         conn.commit()
                         cur.close()
                         #db["classes"].insert(student_id = sender_id, class_id = 2, class_rating = 4.5)
