@@ -74,7 +74,7 @@ def webhook():
                         #db["classes"].insert(student_id = sender_id, class_id = 2, class_rating = 4.5)
                         send_generic_message(sender_id)
                     else:
-                        # send_message(sender_id, "new again!")
+                        send_message(sender_id, "new again!")
                         page.send(recipient_id, "hello world!")
 
                 if messaging_event.get("delivery"):  # delivery confirmation
