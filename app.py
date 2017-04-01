@@ -68,7 +68,7 @@ def webhook():
                         #send_message(sender_id, "did it get here?")
                         conn.rollback()
                         cur = conn.cursor()
-                        cur.execute("INSERT INTO ratings VALUES (1, 2, 4, 3.5)")
+                        cur.execute("INSERT INTO ratings (id, student_id, class_id, rating) VALUES (1, 2, 4, 3.5)")
                         conn.commit()
                         cur.close()
                         #db["classes"].insert(student_id = sender_id, class_id = 2, class_rating = 4.5)
@@ -108,7 +108,7 @@ def is_class(text):
     text = text.replace(" ", "")
     text = text.lower()
     curr = conn.cursor();
-    cur.execute("SELECT id FROM classes WHERE name = ")
+    cur.execute("SELECT id FROM classes WHERE name = ?", )
 
 
 def keyword(message):
