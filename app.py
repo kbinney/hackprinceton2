@@ -12,7 +12,7 @@ from flask import Flask, request
 from pydal import DAL, Field
 from fbmq import Attachment, Template, QuickReply, Page
 
-# page = fbmq.Page(EAAFcHZCdCaGwBAIP6pJPLww9ZA2rQDomnqA8mnWo6QdL7umCOzKtRdiUT0u4uYHhRrDwVZAgbt9b5ps5GdVMRnmvLsQJRy9dZBZCFPmFI2DiWWQj48kHFzKJtoZBQJ2mqEiT9O9Swfwo5ueh6oTeeBXGA6iq0Y0rqzx7AMVt5JXgZDZD);
+page = Page(EAAFcHZCdCaGwBAIP6pJPLww9ZA2rQDomnqA8mnWo6QdL7umCOzKtRdiUT0u4uYHhRrDwVZAgbt9b5ps5GdVMRnmvLsQJRy9dZBZCFPmFI2DiWWQj48kHFzKJtoZBQJ2mqEiT9O9Swfwo5ueh6oTeeBXGA6iq0Y0rqzx7AMVt5JXgZDZD);
 
 
 urlparse.uses_netloc.append("postgres")
