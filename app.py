@@ -57,8 +57,8 @@ def webhook():
 
     return "ok", 200
 
-def key_word(message):
-    return (message == "home")
+def keyword(message):
+    return message == "home"
 
 def send_message(recipient_id, message_text):
 
