@@ -10,8 +10,8 @@ import urlparse
 import requests
 from flask import Flask, request
 
-#urlparse.uses_netloc.append("postgres")
-#url = urlparse.urlparse(os.environ["DATABASE_URL"])
+urlparse.uses_netloc.append("postgres")
+url = urlparse.urlparse(os.environ["DATABASE_URL"])
 
 conn = psycopg2.connect(
     database="d1a2od5rrpp3su",
