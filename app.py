@@ -14,10 +14,10 @@ from flask import Flask, request
 #url = urlparse.urlparse(os.environ["DATABASE_URL"])
 
 conn = psycopg2.connect(
-    database=d1a2od5rrpp3su,
-    user=gjgpjsukugfdfa,
-    password=9013121b453bb37b38e6518bd32c615c5d6b6fcf162d6a3113ab0088ac91cfba,
-    host=ec2-107-22-236-252.compute-1.amazonaws.com,
+    database="d1a2od5rrpp3su",
+    user="gjgpjsukugfdfa",
+    password="9013121b453bb37b38e6518bd32c615c5d6b6fcf162d6a3113ab0088ac91cfba",
+    host="ec2-107-22-236-252.compute-1.amazonaws.com",
     port=5432
 )
 
