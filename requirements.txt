@@ -4,3 +4,4 @@ MarkupSafe==0.23
 Psycopg2==2.7.1
 PyDAL==17.03
 Werkzeug==0.11.10
+fbmq==2.0.2
