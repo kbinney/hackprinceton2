@@ -10,6 +10,9 @@ import urlparse
 import requests
 from flask import Flask, request
 from pydal import DAL, Field
+from fbmq import Attachment, Template, QuickReply, Page
+
+page = fbmq.Page(EAAFcHZCdCaGwBAIP6pJPLww9ZA2rQDomnqA8mnWo6QdL7umCOzKtRdiUT0u4uYHhRrDwVZAgbt9b5ps5GdVMRnmvLsQJRy9dZBZCFPmFI2DiWWQj48kHFzKJtoZBQJ2mqEiT9O9Swfwo5ueh6oTeeBXGA6iq0Y0rqzx7AMVt5JXgZDZD); 
 
 # urlparse.uses_netloc.append("postgres")
 # url = urlparse.urlparse(os.environ["DATABASE_URL"])
@@ -22,7 +25,7 @@ from pydal import DAL, Field
 #     port=5432
 # )
 
-db = DAL('postgres://gjgpjsukugfdfa:9013121b453bb37b38e6518bd32c615c5d6b6fcf162d6a3113ab0088ac91cfba@ec2-107-22-236-252.compute-1.amazonaws.com:5432/d1a2od5rrpp3su')
+# db = DAL('postgres://gjgpjsukugfdfa:9013121b453bb37b38e6518bd32c615c5d6b6fcf162d6a3113ab0088ac91cfba@ec2-107-22-236-252.compute-1.amazonaws.com:5432/d1a2od5rrpp3su')
 app = Flask(__name__)
 
 
@@ -53,15 +56,18 @@ def webhook():
 
                 if messaging_event.get("message"):  # someone sent us a message
 
+
+
                     sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]  # the message's text
                     if keyword(message_text):
-                        db.classes.insert(class_id =1, student_id=2, rating =4, hours=10, papers=0, pages=2, reading=2, psets=3, tests=4)
+                        # db.classes.insert(class_id =1, student_id=2, rating =4, hours=10, papers=0, pages=2, reading=2, psets=3, tests=4)
 
                         send_generic_message(sender_id)
                     else:
-                        send_message(sender_id, "new again!")
+                        # send_message(sender_id, "new again!")
+                        page.send(recipient_id, "hello world!")
 
                 if messaging_event.get("delivery"):  # delivery confirmation
                     pass
@@ -73,6 +79,23 @@ def webhook():
                     pass
 
     return "ok", 200
+
+# new sect - fbmq 
+@page.handle_message 
+def message_handler(event): 
+    """:type event: fbmq.Event"""
+    sender_id = event.sender_id 
+    message = event.message_text 
+
+    page.send(sender_id, "thank you! your message '%s'" % message)
+
+@page.after_send
+def after_send(payload, response):
+  """:type payload: fbmq.Payload"""
+  print("complete")
+
+# new sect - fbmq 
+
 def is_class(text):
     text = text.replace(" ", "")
     text = text.lower()
@@ -162,6 +185,8 @@ def send_generic_message(recipientId):
     if r.status_code != 200:
         log(r.status_code)
         log(r.text)
+
+
 
 def log(message):  # simple wrapper for logging to stdout on heroku
     print str(message)
