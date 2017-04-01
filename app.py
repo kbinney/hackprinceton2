@@ -85,7 +85,7 @@ def send_message(recipient_id, message_text):
         log(r.status_code)
         log(r.text)
 
-def sendGenericMessage(recipientId):
+def send_generic_message(recipientId):
     params = {
         "access_token": os.environ["PAGE_ACCESS_TOKEN"]
     }
