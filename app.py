@@ -4,10 +4,25 @@
 import os
 import sys
 import json
+import psycopg2
+import urlparse
 
 import requests
 from flask import Flask, request
+from pydal import DAL, Field
 
+# urlparse.uses_netloc.append("postgres")
+# url = urlparse.urlparse(os.environ["DATABASE_URL"])
+
+# conn = psycopg2.connect(
+#     database="d1a2od5rrpp3su",
+#     user="gjgpjsukugfdfa",
+#     password="9013121b453bb37b38e6518bd32c615c5d6b6fcf162d6a3113ab0088ac91cfba",
+#     host="ec2-107-22-236-252.compute-1.amazonaws.com",
+#     port=5432
+# )
+
+db = DAL('postgres://gjgpjsukugfdfa:9013121b453bb37b38e6518bd32c615c5d6b6fcf162d6a3113ab0088ac91cfba@ec2-107-22-236-252.compute-1.amazonaws.com:5432/d1a2od5rrpp3su')
 app = Flask(__name__)
 
 
@@ -42,6 +57,8 @@ def webhook():
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]  # the message's text
                     if keyword(message_text):
+                        db.classes.insert(class_id =1, student_id=2, rating =4, hours=10, papers=0, pages=2, reading=2, psets=3, tests=4)
+
                         send_generic_message(sender_id)
                     else:
                         send_message(sender_id, "new again!")
@@ -56,11 +73,18 @@ def webhook():
                     pass
 
     return "ok", 200
+def is_class(text):
+    text = text.replace(" ", "")
+    text = text.lower()
+    curr = conn.cursor();
+    cur.execute("SELECT id FROM classes WHERE name = ")
+
 
 def keyword(message):
     if (message == "home"):
         return True
-    else
+    else:
+        return False
 
 def send_message(recipient_id, message_text):
 
@@ -134,7 +158,7 @@ def send_generic_message(recipientId):
       }
     }
     })
-    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
+    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=messageData)
     if r.status_code != 200:
         log(r.status_code)
         log(r.text)
