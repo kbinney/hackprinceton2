@@ -10,15 +10,15 @@ import urlparse
 import requests
 from flask import Flask, request
 
-urlparse.uses_netloc.append("postgres")
-url = urlparse.urlparse(os.environ["DATABASE_URL"])
+#urlparse.uses_netloc.append("postgres")
+#url = urlparse.urlparse(os.environ["DATABASE_URL"])
 
 conn = psycopg2.connect(
-    database=url.path[1:],
-    user=url.username,
-    password=url.password,
-    host=url.hostname,
-    port=url.port
+    database=d1a2od5rrpp3su,
+    user=gjgpjsukugfdfa,
+    password=9013121b453bb37b38e6518bd32c615c5d6b6fcf162d6a3113ab0088ac91cfba,
+    host=ec2-107-22-236-252.compute-1.amazonaws.com,
+    port=5432
 )
 
 app = Flask(__name__)
@@ -56,9 +56,9 @@ def webhook():
                     message_text = messaging_event["message"]["text"]  # the message's text
                     if keyword(message_text):
                         cur = conn.cursor();
-                        curr.execute("INSERT INTO classes VALUES (1, 1, 4, 10, 0, 2, 2)")
+                        cur.execute("INSERT INTO classes VALUES (1, 1, 4, 10, 0, 2, 2, 3, 4)")
                         conn.commit()
-                        curr.close()
+                        cur.close()
                         send_generic_message(sender_id)
                     else:
                         send_message(sender_id, "new again!")
