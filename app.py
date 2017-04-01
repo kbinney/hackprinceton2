@@ -11,18 +11,18 @@ import requests
 from flask import Flask, request
 from pydal import DAL, Field
 
-# urlparse.uses_netloc.append("postgres")
-# url = urlparse.urlparse(os.environ["DATABASE_URL"])
+urlparse.uses_netloc.append("postgres")
+url = urlparse.urlparse(os.environ["DATABASE_URL"])
 
-# conn = psycopg2.connect(
-#     database="d1a2od5rrpp3su",
-#     user="gjgpjsukugfdfa",
-#     password="9013121b453bb37b38e6518bd32c615c5d6b6fcf162d6a3113ab0088ac91cfba",
-#     host="ec2-107-22-236-252.compute-1.amazonaws.com",
-#     port=5432
-# )
+conn = psycopg2.connect(
+    database="d1a2od5rrpp3su",
+    user="gjgpjsukugfdfa",
+    password="9013121b453bb37b38e6518bd32c615c5d6b6fcf162d6a3113ab0088ac91cfba",
+    host="ec2-107-22-236-252.compute-1.amazonaws.com",
+    port=5432
+)
 
-db = DAL('postgres://gjgpjsukugfdfa:9013121b453bb37b38e6518bd32c615c5d6b6fcf162d6a3113ab0088ac91cfba@ec2-107-22-236-252.compute-1.amazonaws.com:5432/d1a2od5rrpp3su')
+#db = DAL('postgres://gjgpjsukugfdfa:9013121b453bb37b38e6518bd32c615c5d6b6fcf162d6a3113ab0088ac91cfba@ec2-107-22-236-252.compute-1.amazonaws.com:5432/d1a2od5rrpp3su')
 app = Flask(__name__)
 
 
@@ -57,8 +57,12 @@ def webhook():
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]  # the message's text
                     if keyword(message_text):
-                        db.classes.insert(class_id =1, student_id=2, rating =4, hours=10, papers=0, pages=2, reading=2, psets=3, tests=4)
-
+                        send_message(sender_id, "did it get here?")
+                        cur = conn.cursor();
+                        cur.execute("INSERT INTO ratings VALUES (1, 2, 4, 3.5)")
+                        conn.commit()
+                        cur.close()
+                        #db["classes"].insert(student_id = sender_id, class_id = 2, class_rating = 4.5)
                         send_generic_message(sender_id)
                     else:
                         send_message(sender_id, "new again!")
