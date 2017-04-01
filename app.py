@@ -4,9 +4,22 @@
 import os
 import sys
 import json
+import psycopg2
+import urlparse
 
 import requests
 from flask import Flask, request
+
+urlparse.uses_netloc.append("postgres")
+url = urlparse.urlparse(os.environ["DATABASE_URL"])
+
+conn = psycopg2.connect(
+    database=url.path[1:],
+    user=url.username,
+    password=url.password,
+    host=url.hostname,
+    port=url.port
+)
 
 app = Flask(__name__)
 
@@ -42,6 +55,10 @@ def webhook():
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]  # the message's text
                     if keyword(message_text):
+                        cur = conn.cursor();
+                        curr.execute("INSERT INTO classes VALUES (1, 1, 4, 10, 0, 2, 2)")
+                        conn.commit()
+                        curr.close()
                         send_generic_message(sender_id)
                     else:
                         send_message(sender_id, "new again!")
