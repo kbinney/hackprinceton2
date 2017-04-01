@@ -57,7 +57,7 @@ def webhook():
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]  # the message's text
                     if keyword(message_text):
-                        send_message(sender_id, "did it get here?")
+                        #send_message(sender_id, "did it get here?")
                         cur = conn.cursor();
                         cur.execute("INSERT INTO ratings VALUES (1, 2, 4, 3.5)")
                         conn.commit()
@@ -77,6 +77,7 @@ def webhook():
                     pass
 
     return "ok", 200
+
 def is_class(text):
     text = text.replace(" ", "")
     text = text.lower()
