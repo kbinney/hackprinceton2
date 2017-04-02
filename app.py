@@ -65,6 +65,10 @@ def webhook():
                     message_text = messaging_event["message"]["text"]  # the message's text
                     if sender_id in messages:
                         # if we've gotton a class already, this must be the rating.
+                        if message_text == "done":
+                            send_message(sender_id, "Thank you for your ratings! Please wait a moment while we load your recommendations.")
+                            messages[sender_id] = (False, "")
+                            return "ok", 200
                         if messages[sender_id][0]:
                             rating = message_text.replace(" ","")
                             if rating.isdigit() and int(rating) > 0 and int(rating) <=5:
@@ -80,10 +84,6 @@ def webhook():
                                 messages[sender_id] = (False, "")
                                 #print("got the rating")
                                 return "ok", 200
-                            elif message_text = "done": 
-                                send_message(sender_id, "Thank you for your ratings! Please wait a moment while we load your recommendations.")
-                                messages[sender_id] = (False, "")
-                                return "ok", 200 
                             else:
                                 send_message(sender_id, "Your rating must be a number between 1 and 5. Please try again")
                                 return "ok", 200
