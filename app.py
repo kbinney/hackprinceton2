@@ -13,7 +13,7 @@ from pydal import DAL, Field
 #from fbmq import Attachment, Template, QuickReply, Page
 
 #page = Page(PAGE_ACCESS_TOKEN)
-messages = dict()
+messages = {}
 
 #urlparse.uses_netloc.append("postgres")
 #url = urlparse.urlparse(os.environ["DATABASE_URL"])
@@ -75,6 +75,7 @@ def webhook():
                                 cur.close()
                                 send_message(sender_id, "Thanks for the rating. What's another class you are taking?")
                                 messages[sender_id] = (False, "")
+                                print("got the rating")
                                 return "ok", 200
                             else:
                                 send_message(sender_id, "Your rating must be a number between 1 and 5. Please try again")
@@ -83,6 +84,7 @@ def webhook():
                             class_num = which_class(message_text)
                             if class_num > -1:
                                 messages[sender_id] = (True, class_num)
+                                print("got the class")
                                 send_message(sender_id, "Please rank your enjoyment of the class on a scale of 1 - 5")
                                 return "ok", 200
                             else:
@@ -90,6 +92,7 @@ def webhook():
                                 return "ok", 200
                     else:
                         messages[sender_id] = (False, "")
+                        print("added to the dict")
                         send_message(sender_id, "Welcome to ClassRate! We will ask your enjoyment of classes you've taken so far, then give you reccomendations for other classes. The more classes you rate, the better the reccomendations!")
                         send_generic_message(recipient_id) 
                         return "ok", 200
