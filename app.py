@@ -96,6 +96,7 @@ def webhook():
                         messages[sender_id] = (False, "")
                         print("added to the dict")
                         send_message(sender_id, "Welcome to ClassRate! We will ask your enjoyment of classes you've taken so far, then give you reccomendations for other classes. The more classes you rate, the better the reccomendations!")
+                        send_generic_message(sender_id) 
                         return "ok", 200
 
                     # if keyword(message_text):
