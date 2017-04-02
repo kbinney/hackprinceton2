@@ -67,7 +67,7 @@ def webhook():
                         # if we've gotton a class already, this must be the rating.
                         if messages[sender_id][0]:
                             rating = message_text.replace(" ","")
-                            if rating.isdigit():
+                            if rating.isdigit() and int(rating) > 0 and int(rating) <=5:
                                 conn.rollback()
                                 cur = conn.cursor()
                                 stud_id = int(sender_id)
