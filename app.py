@@ -67,7 +67,10 @@ def webhook():
                             if rating.isdigit():
                                 conn.rollback()
                                 cur = conn.cursor()
-                                cur.execute("INSERT INTO ratings (student_id, class_id, rating) VALUES (%s, %s, %s)", int(sender_id), messages[sender_id][1], int(rating))
+                                stud_id = int(student_id)
+                                class_id = messages[sender_id][i]
+                                num_rating = int(rating)
+                                cur.execute("INSERT INTO ratings (student_id, class_id, rating) VALUES (%s, %s, %s)", (stud_id, class_id, num_rating))
                                 conn.commit()
                                 cur.close()
                                 send_message(sender_id, "Thanks for the rating. What's another class you are taking?")
