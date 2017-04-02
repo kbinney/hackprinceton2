@@ -67,7 +67,7 @@ def webhook():
                             if rating.isdigit() and rating >= 0 and rating <= 5:
                                 conn.rollback()
                                 cur = conn.cursor()
-                                cur.execute("INSERT INTO ratings (student_id, class_id, rating) VALUES (?, ?, ?)", int(sender_id), messages[sender_id][1], int(rating))
+                                cur.execute("INSERT INTO ratings (student_id, class_id, rating) VALUES (%s, %s, %s)", int(sender_id), messages[sender_id][1], int(rating))
                                 conn.commit()
                                 cur.close()
                                 send_message(sender_id, "Thanks for the rating. What's another class you are taking?")
@@ -114,8 +114,8 @@ def webhook():
 def which_class(text):
     text = text.replace(" ", "")
     text = text.lower()
-    cur = conn.cursor();
-    row = cur.execute("SELECT id FROM classes WHERE name = ?", text)
+    cur = conn.cursor()
+    row = cur.execute("SELECT id FROM classes WHERE name = %s", (text,))
     conn.comit()
     cur.close()
     return 1
