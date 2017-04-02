@@ -10,13 +10,13 @@ import urlparse
 import requests
 from flask import Flask, request
 from pydal import DAL, Field
-from fbmq import Attachment, Template, QuickReply, Page
+#from fbmq import Attachment, Template, QuickReply, Page
 
 #page = Page(PAGE_ACCESS_TOKEN)
 messages = dict()
 
-urlparse.uses_netloc.append("postgres")
-url = urlparse.urlparse(os.environ["DATABASE_URL"])
+#urlparse.uses_netloc.append("postgres")
+#url = urlparse.urlparse(os.environ["DATABASE_URL"])
 
 conn = psycopg2.connect(
     database="d1a2od5rrpp3su",
@@ -64,7 +64,7 @@ def webhook():
                         # if we've gotton a class already, this must be the rating.
                         if messages[sender_id][0]:
                             rating = message.replace(" ","")
-                            if rating.isdigit() && rating >= 0 and rating <= 5:
+                            if rating.isdigit() and rating >= 0 and rating <= 5:
                                 conn.rollback()
                                 cur = conn.cursor()
                                 cur.execute("INSERT INTO ratings (student_id, class_id, rating) VALUES (?, ?, ?)", int(sender_id), messages[sender_id][1], int(rating))
