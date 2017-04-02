@@ -83,21 +83,21 @@ def webhook():
                                 send_message(sender_id, "I'm sorry, we didn't recognize that class. Please enter another class, or try a shorter abbreviation (ie cs50, sls20, etc")
                     else:
                         messages[sender_id] = (False, "")
-                        send_message(sender_id, "Welcome to ClassRate! We will ask your enjoyment of classes you've taken so far, then give you reccomendations for other classes. The more classes you rater, the better the reccomendations!")
+                        #send_message(sender_id, "Welcome to ClassRate! We will ask your enjoyment of classes you've taken so far, then give you reccomendations for other classes. The more classes you rater, the better the reccomendations!")
 
-                    if keyword(message_text):
+                    # if keyword(message_text):
 
-                        #send_message(sender_id, "did it get here?")
-                        conn.rollback()
-                        cur = conn.cursor()
-                        cur.execute("INSERT INTO ratings (student_id, class_id, rating) VALUES (2, 4, 3.5)")
-                        conn.commit()
-                        cur.close()
-                        #db["classes"].insert(student_id = sender_id, class_id = 2, class_rating = 4.5)
-                        send_generic_message(sender_id)
-                    else:
-                        send_message(sender_id, "new again!")
-                        page.send(recipient_id, "hello world!")
+                    #     #send_message(sender_id, "did it get here?")
+                    #     conn.rollback()
+                    #     cur = conn.cursor()
+                    #     cur.execute("INSERT INTO ratings (student_id, class_id, rating) VALUES (2, 4, 3.5)")
+                    #     conn.commit()
+                    #     cur.close()
+                    #     #db["classes"].insert(student_id = sender_id, class_id = 2, class_rating = 4.5)
+                    #     send_generic_message(sender_id)
+                    # else:
+                    #     send_message(sender_id, "new again!")
+                    #     page.send(recipient_id, "hello world!")
 
                 if messaging_event.get("delivery"):  # delivery confirmation
                     pass
@@ -111,13 +111,18 @@ def webhook():
 
 
 
-def is_class(text):
+def which_class(text):
     text = text.replace(" ", "")
     text = text.lower()
     curr = conn.cursor();
-    cur.execute("SELECT id FROM classes WHERE name = ?", text)
+    row = cur.execute("SELECT id FROM classes WHERE name = ?", text)
     conn.comit()
     cur.close()
+    return 1
+    if len(row) < 1:
+        return -1
+    else:
+        return row[0]
 
 
 def keyword(message):
