@@ -93,9 +93,9 @@ def webhook():
                                 send_message(sender_id, "I'm sorry, we didn't recognize that class. Please enter another class, or try a shorter abbreviation (ie cs50, sls20, etc")
                                 return "ok", 200
                             if message_text == "done":
-                            send_message(sender_id, "Thank you for your ratings! Please wait a moment while we load your recommendations.")
-                            messages[sender_id] = (False, "")
-                            return "ok", 200
+                                send_message(sender_id, "Thank you for your ratings! Please wait a moment while we load your recommendations.")
+                                messages[sender_id] = (False, "")
+                                return "ok", 200
                     else:
                         messages[sender_id] = (False, "")
                         #print("added to the dict")
