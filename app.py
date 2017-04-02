@@ -121,7 +121,7 @@ def webhook():
 
                 if messaging_event.get("delivery"):  # delivery confirmation
                     pass
-
+                    
                 if messaging_event.get("optin"):  # optin confirmation
                     pass
 
