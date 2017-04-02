@@ -10,9 +10,13 @@ import urlparse
 import requests
 from flask import Flask, request
 from pydal import DAL, Field
+#from fbmq import Attachment, Template, QuickReply, Page
 
-urlparse.uses_netloc.append("postgres")
-url = urlparse.urlparse(os.environ["DATABASE_URL"])
+#page = Page(PAGE_ACCESS_TOKEN)
+messages = {}
+
+#urlparse.uses_netloc.append("postgres")
+#url = urlparse.urlparse(os.environ["DATABASE_URL"])
 
 conn = psycopg2.connect(
     database="d1a2od5rrpp3su",
@@ -23,6 +27,7 @@ conn = psycopg2.connect(
 )
 
 #db = DAL('postgres://gjgpjsukugfdfa:9013121b453bb37b38e6518bd32c615c5d6b6fcf162d6a3113ab0088ac91cfba@ec2-107-22-236-252.compute-1.amazonaws.com:5432/d1a2od5rrpp3su')
+
 app = Flask(__name__)
 
 
@@ -50,38 +55,94 @@ def webhook():
 
         for entry in data["entry"]:
             for messaging_event in entry["messaging"]:
-
                 if messaging_event.get("message"):  # someone sent us a message
-
+                    log("message")
+                    if "is_echo" in messaging_event["message"]:
+                        return ("ok", 200)
                     sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]  # the message's text
-                    if keyword(message_text):
-                        send_message(sender_id, "did it get here?")
-                        cur = conn.cursor();
-                        cur.execute("INSERT INTO ratings VALUES (1, 2, 4, 3.5)")
-                        conn.commit()
-                        cur.close()
-                        #db["classes"].insert(student_id = sender_id, class_id = 2, class_rating = 4.5)
-                        send_generic_message(sender_id)
+                    if sender_id in messages:
+                        # if we've gotton a class already, this must be the rating.
+                        if messages[sender_id][0]:
+                            rating = message_text.replace(" ","")
+                            if rating.isdigit() and int(rating) > 0 and int(rating) <=5:
+                                messages[sender_id] = (False, "")
+                                conn.rollback()
+                                cur = conn.cursor()
+                                stud_id = int(sender_id)
+                                class_id = messages[sender_id][1]
+                                num_rating = int(rating)
+                                cur.execute("INSERT INTO ratings (student_id, class_id, rating) VALUES (%s, %s, %s)", (stud_id, class_id, num_rating))
+                                conn.commit()
+                                cur.close()
+                                send_message(sender_id, "Thanks for the rating. What's another class you are taking?")
+                                #print("got the rating")
+                                return "ok", 200
+                            else:
+                                send_message(sender_id, "Your rating must be a number between 1 and 5. Please try again")
+                                return "ok", 200
+                        else:
+                            class_num = which_class(message_text)
+                            if class_num > -1:
+                                messages[sender_id] = (True, class_num)
+                                #print("got the class")
+                                send_message(sender_id, "Please rank your enjoyment of the class on a scale of 1 - 5")
+                                return "ok", 200
+                            else:
+                                send_message(sender_id, "I'm sorry, we didn't recognize that class. Please enter another class, or try a shorter abbreviation (ie cs50, sls20, etc")
+                                return "ok", 200
+                            if message_text == "done":
+                            send_message(sender_id, "Thank you for your ratings! Please wait a moment while we load your recommendations.")
+                            messages[sender_id] = (False, "")
+                            return "ok", 200
                     else:
-                        send_message(sender_id, "new again!")
+                        messages[sender_id] = (False, "")
+                        #print("added to the dict")
+                        send_message(sender_id, "Welcome to ClassRate! We will ask your enjoyment of classes you've taken so far, then give you reccomendations for other classes. The more classes you rate, the better the reccomendations!")
+                        send_message(sender_id, "What's a class you are taking or have taken?")
+                        fbconnect() 
+                        return "ok", 200
+
+                    # if keyword(message_text):
+
+                    #     #send_message(sender_id, "did it get here?")
+                    #     conn.rollback()
+                    #     cur = conn.cursor()
+                    #     cur.execute("INSERT INTO ratings (student_id, class_id, rating) VALUES (2, 4, 3.5)")
+                    #     conn.commit()
+                    #     cur.close()
+                    #     #db["classes"].insert(student_id = sender_id, class_id = 2, class_rating = 4.5)
+                    #     send_generic_message(sender_id)
+                    # else:
+                    #     send_message(sender_id, "new again!")
+                    #     page.send(recipient_id, "hello world!")
 
                 if messaging_event.get("delivery"):  # delivery confirmation
                     pass
-
+                    
                 if messaging_event.get("optin"):  # optin confirmation
                     pass
 
                 if messaging_event.get("postback"):  # user clicked/tapped "postback" button in earlier message
                     pass
-
     return "ok", 200
-def is_class(text):
+
+
+
+def which_class(text):
     text = text.replace(" ", "")
     text = text.lower()
-    curr = conn.cursor();
-    cur.execute("SELECT id FROM classes WHERE name = ")
+    cur = conn.cursor()
+    #conn.rollback()
+    row = cur.execute("SELECT id FROM classes WHERE name1 = (%s)", (text,))
+    conn.commit()
+    cur.close()
+    return 2
+    if len(row) < 1:
+        return -1
+    else:
+        return row[0]
 
 
 def keyword(message):
@@ -130,17 +191,15 @@ def send_generic_message(recipientId):
         "payload": {
           "template_type": "generic",
           "elements": [{
-            "title": "rift",
-            "subtitle": "Next-generation virtual reality",
-            "item_url": "https://www.oculus.com/en-us/rift/",
-            "image_url": "http://messengerdemo.parseapp.com/img/rift.png",
+            "title": "ClassRate",
+            "subtitle": "Q guide for the lazy",
             "buttons": [{
-              "type": "web_url",
+              "type": "postback",
               "url": "https://www.oculus.com/en-us/rift/",
-              "title": "Open Web URL"
+              "title": "Enter classes"
             }, {
               "type": "postback",
-              "title": "Call Postback",
+              "title": "Recommend me",
               "payload": "Payload for first bubble",
             }],
           }, {
@@ -167,9 +226,75 @@ def send_generic_message(recipientId):
         log(r.status_code)
         log(r.text)
 
+
+
 def log(message):  # simple wrapper for logging to stdout on heroku
     print str(message)
     sys.stdout.flush()
+
+def fbconnect():
+    if request.args.get('state') != login_session['state']:
+        response = make_response(json.dumps('Invalid state parameter.'), 401)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    access_token = request.data
+    print "access token received %s " % access_token
+
+    app_id = json.loads(open('fb_client_secrets.json', 'r').read())[
+        'web']['app_id']
+    app_secret = json.loads(
+        open('fb_client_secrets.json', 'r').read())['web']['app_secret']
+    url = 'https://graph.facebook.com/oauth/access_token?grant_type=fb_exchange_token&client_id=%s&client_secret=%s&fb_exchange_token=%s' % (
+        app_id, app_secret, access_token)
+    h = httplib2.Http()
+    result = h.request(url, 'GET')[1]
+
+    # Use token to get user info from API
+    userinfo_url = "https://graph.facebook.com/v2.2/me"
+    # strip expire tag from access token
+    token = result.split("&")[0]
+
+
+    url = 'https://graph.facebook.com/v2.2/me?%s' % token
+    h = httplib2.Http()
+    result = h.request(url, 'GET')[1]
+    # print "url sent for API access:%s"% url
+    # print "API JSON result: %s" % result
+    data = json.loads(result)
+    login_session['provider'] = 'facebook'
+    login_session['username'] = data["name"]
+    login_session['email'] = data["email"]
+    login_session['facebook_id'] = data["id"]
+
+    # The token must be stored in the login_session in order to properly logout, let's strip out the information before the equals sign in our token
+    stored_token = token.split("=")[1]
+    login_session['access_token'] = stored_token
+
+    # Get user picture
+    url = 'https://graph.facebook.com/v2.2/me/picture?%s&redirect=0&height=200&width=200' % token
+    h = httplib2.Http()
+    result = h.request(url, 'GET')[1]
+    data = json.loads(result)
+
+    login_session['picture'] = data["data"]["url"]
+
+    # see if user exists
+    user_id = getUserID(login_session['email'])
+    if not user_id:
+        user_id = createUser(login_session)
+    login_session['user_id'] = user_id
+
+    output = ''
+    output += '<h1>Welcome, '
+    output += login_session['username']
+
+    output += '!</h1>'
+    output += '<img src="'
+    output += login_session['picture']
+    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
+
+    flash("Now logged in as %s" % login_session['username'])
+    return output
 
 
 if __name__ == '__main__':
