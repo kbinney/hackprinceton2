@@ -12,7 +12,7 @@ from flask import Flask, request
 from pydal import DAL, Field
 from fbmq import Attachment, Template, QuickReply, Page
 
-page = Page(EAAFcHZCdCaGwBAIP6pJPLww9ZA2rQDomnqA8mnWo6QdL7umCOzKtRdiUT0u4uYHhRrDwVZAgbt9b5ps5GdVMRnmvLsQJRy9dZBZCFPmFI2DiWWQj48kHFzKJtoZBQJ2mqEiT9O9Swfwo5ueh6oTeeBXGA6iq0Y0rqzx7AMVt5JXgZDZD);
+page = Page(PAGE_ACCESS_TOKEN)
 
 
 urlparse.uses_netloc.append("postgres")
@@ -57,10 +57,7 @@ def webhook():
             for messaging_event in entry["messaging"]:
 
                 if messaging_event.get("message"):  # someone sent us a message
-
-
-
-                    sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
+                   sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]  # the message's text
                     if keyword(message_text):
