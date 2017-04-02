@@ -77,9 +77,14 @@ def webhook():
                                 messages[sender_id] = (False, "")
                                 print("got the rating")
                                 return "ok", 200
+                            elif message_text = "done": 
+                                send_message(sender_id, "Thank you for your ratings! Please wait a moment while we load your recommendations.")
+                                messages[sender_id] = (False, "")
+                                return "ok", 200 
                             else:
                                 send_message(sender_id, "Your rating must be a number between 1 and 5. Please try again")
                                 return "ok", 200
+
                         else:
                             class_num = which_class(message_text)
                             if class_num > -1:
@@ -94,7 +99,6 @@ def webhook():
                         messages[sender_id] = (False, "")
                         print("added to the dict")
                         send_message(sender_id, "Welcome to ClassRate! We will ask your enjoyment of classes you've taken so far, then give you reccomendations for other classes. The more classes you rate, the better the reccomendations!")
-                        send_generic_message(sender_id) 
                         return "ok", 200
 
                     # if keyword(message_text):
