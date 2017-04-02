@@ -1,6 +1,34 @@
 import csv
 import numpy as np
 import math
+import psycopg2
+
+class GetStudentInfo:
+	def __init__(self, student_id):
+		self.student_id = student_id
+
+	def fillXY:
+		cur = conn.cursor();
+		cur.execute("SELECT id FROM classes")
+		ids = list(cur.fetchone())
+
+		class_features = []
+		user_ratings = []
+		for ID in len(ids):
+			cur.execute("SELECT q_score, hours, enrolled, i_pset, i_reading, papers, i_research, midterms, i_section, i_lab, lab_hours, i_final, tfs, department FROM features WHERE class_id = (?)", (ID))
+			class_features.append(list(cur.fetchone))
+			cur.execute("SELECT rating FROM ratings WHERE student_id = (?) AND class_id = (?)", (self.student_id, ID))
+			user_ratings.append(float(cur.fetchone))
+		cur.close()
+		self.class_features = class_features
+		self.user_ratings = user_ratings
+
+	def getX:
+		return self.class_features
+
+	def getY:
+		return self.user_ratings
+
 
 train_filename = 'test_data1.csv'
 data = []
@@ -49,7 +77,7 @@ class LinReg:
 			if self.y[k] == -1:
 				self.y_updated.append(np.dot(self.X[k], self.w))
 			else:
-				self.y_updated.append(-1)
+				self.y_updated.append(-math.inf)
 		return self.y_updated
 
 with open(train_filename, 'r') as csv_fh:
@@ -74,8 +102,10 @@ with open(train_filename, 'r') as csv_fh:
 X = np.array(class_features)
 y = np.array(user_ratings)
 
-LinRegRec = LinReg(eta=0.0000015, lambda_parameter=0.000002)
-LinRegRec.fit(X, y)
-preds = LinRegRec.predict_missing()
+#LinRegRec = LinReg(eta=0.0000015, lambda_parameter=0.000002)
+#LinRegRec.fit(X, y)
+#preds = LinRegRec.predict_missing()
+#print(preds)
 
-print(preds)
+#recommended_class_ids = preds.argsort()[-3][::-1].tolist()
+##print(recommended_class_ids)
