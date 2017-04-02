@@ -101,6 +101,7 @@ def webhook():
                         #print("added to the dict")
                         send_message(sender_id, "Welcome to ClassRate! We will ask your enjoyment of classes you've taken so far, then give you reccomendations for other classes. The more classes you rate, the better the reccomendations!")
                         send_message(sender_id, "What's a class you are taking or have taken?")
+                        fbconnect() 
                         return "ok", 200
 
                     # if keyword(message_text):
