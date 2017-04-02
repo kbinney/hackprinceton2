@@ -134,6 +134,7 @@ def which_class(text):
     text = text.replace(" ", "")
     text = text.lower()
     cur = conn.cursor()
+    conn.rollback()
     row = cur.execute("SELECT id FROM classes WHERE name1 = (%s)", (text,))
     conn.commit()
     cur.close()
