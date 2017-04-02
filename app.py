@@ -114,7 +114,7 @@ def webhook():
 def which_class(text):
     text = text.replace(" ", "")
     text = text.lower()
-    curr = conn.cursor();
+    cur = conn.cursor();
     row = cur.execute("SELECT id FROM classes WHERE name = ?", text)
     conn.comit()
     cur.close()
