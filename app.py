@@ -63,7 +63,7 @@ def webhook():
                     if sender_id in messages:
                         # if we've gotton a class already, this must be the rating.
                         if messages[sender_id][0]:
-                            rating = message.replace(" ","")
+                            rating = message_text.replace(" ","")
                             if rating.isdigit() and rating >= 0 and rating <= 5:
                                 conn.rollback()
                                 cur = conn.cursor()
@@ -75,7 +75,7 @@ def webhook():
                             else:
                                 send_message(sender_id, "Your rating must be a number between 1 and 5. Please try again");
                         else:
-                            class_num = which_class("message")
+                            class_num = which_class(message_text)
                             if class_num > -1:
                                 messages[sender_id] = (True, class_num)
                                 send_message(sender_id, "Please rank your enjoyment of the class on a scale of 1 - 5")
@@ -83,7 +83,7 @@ def webhook():
                                 send_message(sender_id, "I'm sorry, we didn't recognize that class. Please enter another class, or try a shorter abbreviation (ie cs50, sls20, etc")
                     else:
                         messages[sender_id] = (False, "")
-                        #send_message(sender_id, "Welcome to ClassRate! We will ask your enjoyment of classes you've taken so far, then give you reccomendations for other classes. The more classes you rater, the better the reccomendations!")
+                        send_message(sender_id, "Welcome to ClassRate! We will ask your enjoyment of classes you've taken so far, then give you reccomendations for other classes. The more classes you rate, the better the reccomendations!")
 
                     # if keyword(message_text):
 
