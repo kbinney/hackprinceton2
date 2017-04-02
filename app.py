@@ -68,7 +68,7 @@ def webhook():
                                 conn.rollback()
                                 cur = conn.cursor()
                                 stud_id = int(sender_id)
-                                class_id = messages[sender_id][i]
+                                class_id = messages[sender_id][1]
                                 num_rating = int(rating)
                                 cur.execute("INSERT INTO ratings (student_id, class_id, rating) VALUES (%s, %s, %s)", (stud_id, class_id, num_rating))
                                 conn.commit()
