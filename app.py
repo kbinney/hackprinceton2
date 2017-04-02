@@ -57,6 +57,9 @@ def webhook():
             for messaging_event in entry["messaging"]:
 
                 if messaging_event.get("message"):  # someone sent us a message
+                    log("message")
+                    if "is_echo" in messaging_event["message"]:
+                        return ("ok", 200)
                     sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]  # the message's text
@@ -75,7 +78,7 @@ def webhook():
                                 cur.close()
                                 send_message(sender_id, "Thanks for the rating. What's another class you are taking?")
                                 messages[sender_id] = (False, "")
-                                print("got the rating")
+                                #print("got the rating")
                                 return "ok", 200
                             elif message_text = "done": 
                                 send_message(sender_id, "Thank you for your ratings! Please wait a moment while we load your recommendations.")
@@ -89,7 +92,7 @@ def webhook():
                             class_num = which_class(message_text)
                             if class_num > -1:
                                 messages[sender_id] = (True, class_num)
-                                print("got the class")
+                                #print("got the class")
                                 send_message(sender_id, "Please rank your enjoyment of the class on a scale of 1 - 5")
                                 return "ok", 200
                             else:
@@ -97,8 +100,9 @@ def webhook():
                                 return "ok", 200
                     else:
                         messages[sender_id] = (False, "")
-                        print("added to the dict")
+                        #print("added to the dict")
                         send_message(sender_id, "Welcome to ClassRate! We will ask your enjoyment of classes you've taken so far, then give you reccomendations for other classes. The more classes you rate, the better the reccomendations!")
+
                         return "ok", 200
 
                     # if keyword(message_text):
