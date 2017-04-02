@@ -55,7 +55,6 @@ def webhook():
 
         for entry in data["entry"]:
             for messaging_event in entry["messaging"]:
-
                 if messaging_event.get("message"):  # someone sent us a message
                     log("message")
                     if "is_echo" in messaging_event["message"]:
@@ -65,10 +64,6 @@ def webhook():
                     message_text = messaging_event["message"]["text"]  # the message's text
                     if sender_id in messages:
                         # if we've gotton a class already, this must be the rating.
-                        if message_text == "done":
-                            send_message(sender_id, "Thank you for your ratings! Please wait a moment while we load your recommendations.")
-                            messages[sender_id] = (False, "")
-                            return "ok", 200
                         if messages[sender_id][0]:
                             rating = message_text.replace(" ","")
                             if rating.isdigit() and int(rating) > 0 and int(rating) <=5:
@@ -97,6 +92,10 @@ def webhook():
                             else:
                                 send_message(sender_id, "I'm sorry, we didn't recognize that class. Please enter another class, or try a shorter abbreviation (ie cs50, sls20, etc")
                                 return "ok", 200
+                            if message_text == "done":
+                            send_message(sender_id, "Thank you for your ratings! Please wait a moment while we load your recommendations.")
+                            messages[sender_id] = (False, "")
+                            return "ok", 200
                     else:
                         messages[sender_id] = (False, "")
                         #print("added to the dict")
@@ -134,10 +133,11 @@ def which_class(text):
     text = text.replace(" ", "")
     text = text.lower()
     cur = conn.cursor()
+    #conn.rollback()
     row = cur.execute("SELECT id FROM classes WHERE name1 = (%s)", (text,))
     conn.commit()
     cur.close()
-    return 1
+    return 2
     if len(row) < 1:
         return -1
     else:
