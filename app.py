@@ -55,7 +55,6 @@ def webhook():
 
         for entry in data["entry"]:
             for messaging_event in entry["messaging"]:
-
                 if messaging_event.get("message"):  # someone sent us a message
                     log("message")
                     if "is_echo" in messaging_event["message"]:
@@ -134,11 +133,11 @@ def which_class(text):
     text = text.replace(" ", "")
     text = text.lower()
     cur = conn.cursor()
-    conn.rollback()
+    #conn.rollback()
     row = cur.execute("SELECT id FROM classes WHERE name1 = (%s)", (text,))
     conn.commit()
     cur.close()
-    return 1
+    return 2
     if len(row) < 1:
         return -1
     else:
