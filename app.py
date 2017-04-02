@@ -72,6 +72,7 @@ def webhook():
                         if messages[sender_id][0]:
                             rating = message_text.replace(" ","")
                             if rating.isdigit() and int(rating) > 0 and int(rating) <=5:
+                                messages[sender_id] = (False, "")
                                 conn.rollback()
                                 cur = conn.cursor()
                                 stud_id = int(sender_id)
@@ -81,13 +82,11 @@ def webhook():
                                 conn.commit()
                                 cur.close()
                                 send_message(sender_id, "Thanks for the rating. What's another class you are taking?")
-                                messages[sender_id] = (False, "")
                                 #print("got the rating")
                                 return "ok", 200
                             else:
                                 send_message(sender_id, "Your rating must be a number between 1 and 5. Please try again")
                                 return "ok", 200
-
                         else:
                             class_num = which_class(message_text)
                             if class_num > -1:
@@ -102,7 +101,7 @@ def webhook():
                         messages[sender_id] = (False, "")
                         #print("added to the dict")
                         send_message(sender_id, "Welcome to ClassRate! We will ask your enjoyment of classes you've taken so far, then give you reccomendations for other classes. The more classes you rate, the better the reccomendations!")
-
+                        send_message(sender_id, "What's a class you are taking or have taken?")
                         return "ok", 200
 
                     # if keyword(message_text):
