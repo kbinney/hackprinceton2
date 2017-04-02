@@ -64,7 +64,7 @@ def webhook():
                         # if we've gotton a class already, this must be the rating.
                         if messages[sender_id][0]:
                             rating = message_text.replace(" ","")
-                            if rating.isdigit() and rating >= 0 and rating <= 5:
+                            if rating.isdigit():
                                 conn.rollback()
                                 cur = conn.cursor()
                                 cur.execute("INSERT INTO ratings (student_id, class_id, rating) VALUES (%s, %s, %s)", int(sender_id), messages[sender_id][1], int(rating))
@@ -72,18 +72,23 @@ def webhook():
                                 cur.close()
                                 send_message(sender_id, "Thanks for the rating. What's another class you are taking?")
                                 messages[sender_id] = (False, "")
+                                return "ok", 200
                             else:
-                                send_message(sender_id, "Your rating must be a number between 1 and 5. Please try again");
+                                send_message(sender_id, "Your rating must be a number between 1 and 5. Please try again")
+                                return "ok", 200
                         else:
                             class_num = which_class(message_text)
                             if class_num > -1:
                                 messages[sender_id] = (True, class_num)
                                 send_message(sender_id, "Please rank your enjoyment of the class on a scale of 1 - 5")
+                                return "ok", 200
                             else:
                                 send_message(sender_id, "I'm sorry, we didn't recognize that class. Please enter another class, or try a shorter abbreviation (ie cs50, sls20, etc")
+                                return "ok", 200
                     else:
                         messages[sender_id] = (False, "")
                         send_message(sender_id, "Welcome to ClassRate! We will ask your enjoyment of classes you've taken so far, then give you reccomendations for other classes. The more classes you rate, the better the reccomendations!")
+                        return "ok", 200
 
                     # if keyword(message_text):
 
