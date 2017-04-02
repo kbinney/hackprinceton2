@@ -12,8 +12,8 @@ from flask import Flask, request
 from pydal import DAL, Field
 from fbmq import Attachment, Template, QuickReply, Page
 
-page = Page(PAGE_ACCESS_TOKEN)
-
+#page = Page(PAGE_ACCESS_TOKEN)
+messages = dict()
 
 urlparse.uses_netloc.append("postgres")
 url = urlparse.urlparse(os.environ["DATABASE_URL"])
@@ -60,6 +60,31 @@ def webhook():
                     sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]  # the message's text
+                    if sender_id in messages:
+                        # if we've gotton a class already, this must be the rating.
+                        if messages[sender_id][0]:
+                            rating = message.replace(" ","")
+                            if rating.isdigit() && rating >= 0 and rating <= 5:
+                                conn.rollback()
+                                cur = conn.cursor()
+                                cur.execute("INSERT INTO ratings (student_id, class_id, rating) VALUES (?, ?, ?)", int(sender_id), messages[sender_id][1], int(rating))
+                                conn.commit()
+                                cur.close()
+                                send_message(sender_id, "Thanks for the rating. What's another class you are taking?")
+                                messages[sender_id] = (False, "")
+                            else:
+                                send_message(sender_id, "Your rating must be a number between 1 and 5. Please try again");
+                        else:
+                            class_num = which_class("message")
+                            if class_num > -1:
+                                messages[sender_id] = (True, class_num)
+                                send_message(sender_id, "Please rank your enjoyment of the class on a scale of 1 - 5")
+                            else:
+                                send_message(sender_id, "I'm sorry, we didn't recognize that class. Please enter another class, or try a shorter abbreviation (ie cs50, sls20, etc")
+                    else:
+                        messages[sender_id] = (False, "")
+                        send_message(sender_id, "Welcome to ClassRate! We will ask your enjoyment of classes you've taken so far, then give you reccomendations for other classes. The more classes you rater, the better the reccomendations!")
+
                     if keyword(message_text):
 
                         #send_message(sender_id, "did it get here?")
@@ -90,7 +115,9 @@ def is_class(text):
     text = text.replace(" ", "")
     text = text.lower()
     curr = conn.cursor();
-    cur.execute("SELECT id FROM classes WHERE name = ?", )
+    cur.execute("SELECT id FROM classes WHERE name = ?", text)
+    conn.comit()
+    cur.close()
 
 
 def keyword(message):
@@ -139,10 +166,8 @@ def send_generic_message(recipientId):
         "payload": {
           "template_type": "generic",
           "elements": [{
-            "title": "rift",
-            "subtitle": "Next-generation virtual reality",
-            "item_url": "https://www.oculus.com/en-us/rift/",
-            "image_url": "http://messengerdemo.parseapp.com/img/rift.png",
+            "title": "ClassRate",
+            "subtitle": "Q guide for the lazy",
             "buttons": [{
               "type": "web_url",
               "url": "https://www.oculus.com/en-us/rift/",
