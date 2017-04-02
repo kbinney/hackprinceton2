@@ -174,12 +174,12 @@ def send_generic_message(recipientId):
             "title": "ClassRate",
             "subtitle": "Q guide for the lazy",
             "buttons": [{
-              "type": "web_url",
+              "type": "postback",
               "url": "https://www.oculus.com/en-us/rift/",
-              "title": "Open Web URL"
+              "title": "Enter classes"
             }, {
               "type": "postback",
-              "title": "Call Postback",
+              "title": "Recommend me",
               "payload": "Payload for first bubble",
             }],
           }, {
